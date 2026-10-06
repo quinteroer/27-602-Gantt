@@ -19,6 +19,7 @@ h1{font-size:25px;margin:0 0 4px;letter-spacing:-.01em}
 button{font:inherit;font-size:14px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 12px;cursor:pointer}
 button.on{background:var(--ink);color:var(--panel)}
 button:focus-visible,.lab:focus-visible{outline:2px solid #2f7de1;outline-offset:-2px}
+#st{color:var(--mute);font-size:13px;margin-left:4px}
 .leg{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--mute);font-size:13px;margin-bottom:12px}
 .leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
 .wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
@@ -35,6 +36,9 @@ button:focus-visible,.lab:focus-visible{outline:2px solid #2f7de1;outline-offset
 .ph .lab{cursor:pointer}
 .ph .bk{position:absolute;top:12px;height:12px;border-radius:3px;opacity:.5}
 .tk .bk{position:absolute;top:7px;height:18px;border-radius:4px}
+.hl,.hr{position:absolute;top:0;bottom:0;width:9px;cursor:ew-resize;touch-action:none;background:rgba(0,0,0,.22)}
+.hl{left:0;border-radius:4px 0 0 4px}.hr{right:0;border-radius:0 4px 4px 0}
+.hl:hover,.hr:hover{background:rgba(0,0,0,.45)}
 .car{display:inline-block;width:14px;transition:transform .15s}
 .col .car{transform:rotate(-90deg)}
 .dm{position:absolute;top:8px;width:16px;height:16px;transform:rotate(45deg);background:#d4422f;border-radius:2px}
@@ -48,49 +52,30 @@ button:focus-visible,.lab:focus-visible{outline:2px solid #2f7de1;outline-offset
 </head>
 <body>
 <h1>UAV Joint GCP and Flight Planner: Capstone Gantt</h1>
-<p class="sub">Aug 31, 2026 to Apr 30, 2027 (35 weeks). Click a phase to collapse it. Red dashed lines are your milestones; the blue line is Oct 5, 2026. Most tasks are team-wide, so your advisor weekly splits can sit underneath these.</p>
+<p class="sub">Aug 31, 2026 to Apr 30, 2027 (35 weeks). Click a phase to collapse it. Drag the dark handle on either end of a task bar to change its start or length (snaps to weeks). Red dashed lines are milestones; the blue line is Oct 5, 2026.</p>
 <div class="bar" id="fb"></div>
 <div class="leg" id="leg"></div>
 <div class="wrap"><div class="chart" id="ch"></div></div>
-<p class="note">Weeks start on Mondays (W1 = Aug 31, W15 = Dec 7, W30 = Mar 22, W35 = Apr 26). Milestone lines mark the end of the due week. Edit the dates in the data block if your calendar differs.</p>
+<p class="note">Weeks start on Mondays (W1 = Aug 31, W15 = Dec 7, W30 = Mar 22, W35 = Apr 26). Edits save in your own browser automatically. To make them permanent for everyone, use "Commit to GitHub" (needs a GitHub token with write access to the repo) or "Copy data" and paste it into index.html on GitHub.</p>
 <script>
-var P=[
-{n:"1. Planning & proposal",c:"#3b82c4",t:[
-["Research: GDOP, photogrammetry, GCP and flight planning",2,4,"All"],
-["Requirements, success metrics, baseline definitions",3,3,"All"],
-["Proposal draft, advisor review, submit",4,3,"All"]]},
-{n:"2. Formulation & Python simulation (objectives 1, 2)",c:"#7a5cc7",t:[
-["Math: GDOP model, flight-path model, joint optimization",5,8,"All"],
-["Simulation: terrain model, error predictor, grid & sequential baselines",9,7,"All"],
-["Implement joint planner",12,4,"All"],
-["Experiments: joint vs baselines, tuning",23,3,"All"]]},
-{n:"3. Fall deliverables & decisions",c:"#d98a1f",t:[
-["Fall design poster",8,4,"All"],
-["Preliminary report",11,4,"All"],
-["Decide photogrammetry software & plug-in approach",12,3,"All"]]},
-{n:"4. ArcGIS Pro plug-in (objective 3)",c:"#c9453b",t:[
-["Plug-in design & toolbox skeleton (light work over break)",19,4,"All"],
-["Build plug-in: inputs, planner tool, GCP and flight-path outputs",23,4,"All"],
-["Benchmark: confirm 2x lower predicted error than grid",26,2,"All"],
-["Polish, bug fixes, edge cases",29,3,"All"]]},
-{n:"5. Field validation (objective 4)",c:"#5a8f3e",t:[
-["Part 107 license, site permission, airspace authorization, order ArUco targets",16,7,"Kaylee"],
-["Test plan, camera & RTK setup, dry-run flight",23,3,"All"],
-["Validation flight",27,1,"All"],
-["Backup flight window (after spring break)",29,1,"All"],
-["Process data; compare measured vs simulated error",29,4,"All"]]},
-{n:"6. Packaging & documentation (objective 5)",c:"#b0509a",t:[
-["Operator documentation, quick-start & installer package",29,4,"All"],
-["Usability test with a non-team operator",31,2,"All"]]},
-{n:"7. Expo & final report",c:"#6b7a90",t:[
-["Expo abstract & poster (both due 3/26)",26,5,"All"],
-["Final report: full draft & advisor review",31,3,"All"],
-["Final report: revise, submit, project handoff",34,2,"All"]]}
-];
+/*DATA-START*/var P=[
+{"n":"1. Planning & proposal","c":"#3b82c4","t":[["Research: GDOP, photogrammetry, GCP and flight planning",2,4,"All"],["Requirements, success metrics, baseline definitions",3,3,"All"],["Proposal draft, advisor review, submit",4,3,"All"]]},
+{"n":"2. Formulation & Python simulation (objectives 1, 2)","c":"#7a5cc7","t":[["Math: GDOP model, flight-path model, joint optimization",5,8,"All"],["Simulation: terrain model, error predictor, grid & sequential baselines",9,7,"All"],["Implement joint planner",12,4,"All"],["Experiments: joint vs baselines, tuning",23,3,"All"]]},
+{"n":"3. Fall deliverables & decisions","c":"#d98a1f","t":[["Fall design poster",8,4,"All"],["Preliminary report",11,4,"All"],["Decide photogrammetry software & plug-in approach",12,3,"All"]]},
+{"n":"4. ArcGIS Pro plug-in (objective 3)","c":"#c9453b","t":[["Plug-in design & toolbox skeleton (light work over break)",19,4,"All"],["Build plug-in: inputs, planner tool, GCP and flight-path outputs",23,4,"All"],["Benchmark: confirm 2x lower predicted error than grid",26,2,"All"],["Polish, bug fixes, edge cases",29,3,"All"]]},
+{"n":"5. Field validation (objective 4)","c":"#5a8f3e","t":[["Part 107 license, site permission, airspace authorization, order ArUco targets",16,7,"Kaylee"],["Test plan, camera & RTK setup, dry-run flight",23,3,"All"],["Validation flight",27,1,"All"],["Backup flight window (after spring break)",29,1,"All"],["Process data; compare measured vs simulated error",29,4,"All"]]},
+{"n":"6. Packaging & documentation (objective 5)","c":"#b0509a","t":[["Operator documentation, quick-start & installer package",29,4,"All"],["Usability test with a non-team operator",31,2,"All"]]},
+{"n":"7. Expo & final report","c":"#6b7a90","t":[["Expo abstract & poster (both due 3/26)",26,5,"All"],["Final report: full draft & advisor review",31,3,"All"],["Final report: revise, submit, project handoff",34,2,"All"]]}
+];/*DATA-END*/
 var M=[["Team contract, 9/4",1],["Proposal, 10/9",6],["Fall poster, 11/13",11],["Prelim report, 12/7",14],["Expo abstract & poster, 3/26",30],["Final report, 4/30",35,1]];
 var NM=["Elias","Kaylee","Zain","Abbey"],ch=document.getElementById("ch"),leg=document.getElementById("leg"),fb=document.getElementById("fb");
+var GH={o:"quinteroer",r:"27-602-Gantt",f:"index.html"},SK="gantt-v1",orig=JSON.stringify(P.map(function(p){return p.t.map(function(t){return[t[1],t[2]]})}));
 function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined)e.innerHTML=h;return e}
 function lab(a,b){return el("div","lab","<span>"+a+"</span><span class='own'>"+b+"</span>")}
+function say(m){document.getElementById("st").textContent=m}
+function applyPos(a){P.forEach(function(p,i){p.t.forEach(function(t,j){if(a[i]&&a[i][j]){t[1]=a[i][j][0];t[2]=a[i][j][1]}})})}
+try{var sv=localStorage.getItem(SK);if(sv)applyPos(JSON.parse(sv))}catch(e){}
+function save(){try{localStorage.setItem(SK,JSON.stringify(P.map(function(p){return p.t.map(function(t){return[t[1],t[2]]})})))}catch(e){}say("Edited (saved in this browser)")}
 var MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],g=[];
 for(var i=0;i<35;i++){var d=new Date(2026,7,31+7*i),k=MO[d.getMonth()]+(d.getMonth()==0?" 2027":"");if(g.length&&g[g.length-1][0]==k)g[g.length-1][1]++;else g.push([k,1])}
 var h1=el("div","row hd m");h1.appendChild(lab("Schedule","Owner"));var t1=el("div","trk");
@@ -103,16 +88,30 @@ var l=el("div","ml",m[0]);if(m[2]){l.style.right="calc(var(--w)*"+(35-m[1])+" + 
 var v=el("div","vl");v.style.left="calc(var(--lw) + var(--w)*"+m[1]+")";ch.appendChild(v)});mr.appendChild(mt);ch.appendChild(mr);
 var td=el("div","vl td");td.style.left="calc(var(--lw) + var(--w)*5)";td.title="Oct 5, 2026";ch.appendChild(td);
 [[16,7,"Winter break"],[28,1,"Spring break"]].forEach(function(b){var o=el("div","brk");o.style.left="calc(var(--lw) + var(--w)*"+(b[0]-1)+")";o.style.width="calc(var(--w)*"+b[1]+")";o.title=b[2];ch.appendChild(o)});
-var tasks=[];
+var tasks=[],phases=[];
 P.forEach(function(p){
 leg.appendChild(el("span","","<i style='background:"+p.c+"'></i>"+p.n.replace(/^\d\. /,"").replace(/ \(.*\)/,"")));
-var s=Math.min.apply(0,p.t.map(function(x){return x[1]})),e=Math.max.apply(0,p.t.map(function(x){return x[1]+x[2]-1}));
-var r=el("div","row ph"),L=lab("<span class='car'>&#9662;</span> "+p.n,"W"+s+"-"+e);L.tabIndex=0;L.setAttribute("role","button");r.appendChild(L);
-var tr=el("div","trk"),b=el("div","bk");b.style.cssText="background:"+p.c+";left:calc(var(--w)*"+(s-1)+");width:calc(var(--w)*"+(e-s+1)+")";tr.appendChild(b);r.appendChild(tr);ch.appendChild(r);
+var r=el("div","row ph"),L=lab("<span class='car'>&#9662;</span> "+p.n,"");L.tabIndex=0;L.setAttribute("role","button");r.appendChild(L);
+var tr=el("div","trk"),b=el("div","bk");tr.appendChild(b);r.appendChild(tr);ch.appendChild(r);
+function uph(){var s=Math.min.apply(0,p.t.map(function(x){return x[1]})),e=Math.max.apply(0,p.t.map(function(x){return x[1]+x[2]-1}));
+b.style.cssText="background:"+p.c+";left:calc(var(--w)*"+(s-1)+");width:calc(var(--w)*"+(e-s+1)+")";L.querySelector(".own").textContent="W"+s+"-"+e}
+uph();
 var rows=[];
 p.t.forEach(function(t){
-var k=el("div","row tk");var l=lab(t[0],t[3]);l.title=t[0]+" (W"+t[1]+"-"+(t[1]+t[2]-1)+", "+t[3]+")";l.style.paddingLeft="26px";k.appendChild(l);
-var q=el("div","trk"),bb=el("div","bk");bb.style.cssText="background:"+p.c+";left:calc(var(--w)*"+(t[1]-1)+" + 2px);width:calc(var(--w)*"+t[2]+" - 4px)";q.appendChild(bb);k.appendChild(q);ch.appendChild(k);rows.push(k);tasks.push([k,t[3]])});
+var k=el("div","row tk");var l=lab(t[0],t[3]);l.style.paddingLeft="26px";k.appendChild(l);
+var q=el("div","trk"),bb=el("div","bk"),hl=el("div","hl"),hr=el("div","hr");bb.appendChild(hl);bb.appendChild(hr);
+function ap(){bb.style.cssText="background:"+p.c+";left:calc(var(--w)*"+(t[1]-1)+" + 2px);width:calc(var(--w)*"+t[2]+" - 4px)";l.title=t[0]+" (W"+t[1]+"-"+(t[1]+t[2]-1)+", "+t[3]+")";bb.title="W"+t[1]+"-"+(t[1]+t[2]-1)+" ("+t[2]+" wk)";uph()}
+ap();
+function drag(h,side){h.onpointerdown=function(ev){ev.preventDefault();ev.stopPropagation();h.setPointerCapture(ev.pointerId);
+var x0=ev.clientX,s0=t[1],n0=t[2],W=q.offsetWidth/35;
+h.onpointermove=function(e2){var dw=Math.round((e2.clientX-x0)/W),s=s0,n=n0;
+if(side=="r")n=n0+dw;else{s=s0+dw;n=n0-dw}
+if(n<1){if(side=="r")n=1;else{s=s0+n0-1;n=1}}
+if(s<1){n+=s-1;s=1}if(s+n-1>35)n=36-s;
+if(s!=t[1]||n!=t[2]){t[1]=s;t[2]=n;ap()}};
+h.onpointerup=h.onpointercancel=function(){h.onpointermove=h.onpointerup=h.onpointercancel=null;save()}}}
+drag(hl,"l");drag(hr,"r");
+q.appendChild(bb);k.appendChild(q);ch.appendChild(k);rows.push(k);tasks.push([k,t[3]]);phases.push(ap)});
 r._t=function(){var c=r.classList.toggle("col");rows.forEach(function(k){k.style.display=c?"none":""})};
 L.onclick=r._t;L.onkeydown=function(ev){if(ev.key=="Enter"||ev.key==" "){ev.preventDefault();r._t()}};
 });
@@ -120,7 +119,27 @@ leg.appendChild(el("span","","<i style='background:#d4422f'></i>Milestone"));leg
 function all(c){[].forEach.call(ch.querySelectorAll(".ph"),function(r){if(r._t&&r.classList.contains("col")!=c)r._t()})}
 function flt(n,btn){[].forEach.call(fb.querySelectorAll("button"),function(x){x.classList.toggle("on",x==btn)});
 tasks.forEach(function(t){t[0].style.opacity=(!n||t[1].indexOf(n)>-1||t[1]=="All")?1:.2})}
+function dataText(){return "var P=[\n"+P.map(function(p){return JSON.stringify(p)}).join(",\n")+"\n];"}
+function b64e(s){var u=new TextEncoder().encode(s),r="";u.forEach(function(c){r+=String.fromCharCode(c)});return btoa(r)}
+function b64d(s){var r=atob(s.replace(/\s/g,"")),u=new Uint8Array(r.length);for(var i=0;i<r.length;i++)u[i]=r.charCodeAt(i);return new TextDecoder().decode(u)}
+async function commit(){
+var tok=sessionStorage.getItem("ghtok")||prompt("Paste a GitHub personal access token with Contents: read and write on "+GH.o+"/"+GH.r+". It is kept only for this tab.");
+if(!tok)return;sessionStorage.setItem("ghtok",tok);
+var u="https://api.github.com/repos/"+GH.o+"/"+GH.r+"/contents/"+GH.f,H={Authorization:"Bearer "+tok,Accept:"application/vnd.github+json"};
+try{say("Committing...");var r=await fetch(u,{headers:H});if(!r.ok)throw new Error("read failed ("+r.status+")");
+var j=await r.json(),src=b64d(j.content),A="/*DATA-"+"START*/",Z="/*DATA-"+"END*/",a=src.indexOf(A),z=src.indexOf(Z);
+if(a<0||z<0)throw new Error("data markers not found in repo file");
+var out=src.slice(0,a+A.length)+dataText()+src.slice(z);
+var w=await fetch(u,{method:"PUT",headers:H,body:JSON.stringify({message:"Update Gantt task lengths",content:b64e(out),sha:j.sha})});
+if(!w.ok)throw new Error("commit failed ("+w.status+"): you may lack write access");
+say("Committed. The live site updates in a minute or two.")}catch(e){sessionStorage.removeItem("ghtok");say("Error: "+e.message)}}
 ["Collapse all","Expand all"].forEach(function(x,i){var b=el("button","",x);b.onclick=function(){all(i==0)};fb.appendChild(b)});
+var ab=el("button","on","Everyone");ab.onclick=function(){flt("",ab)};fb.appendChild(ab);
+NM.forEach(function(n){var b=el("button","",n);b.onclick=function(){flt(n,b)};fb.appendChild(b)});
+var bc=el("button","","Commit to GitHub");bc.onclick=commit;fb.appendChild(bc);
+var by=el("button","","Copy data");by.onclick=function(){var t=dataText();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){say("Copied. Paste over the var P=[...]; block in index.html.")},function(){prompt("Copy this:",t)})};fb.appendChild(by);
+var br=el("button","","Reset");br.onclick=function(){try{localStorage.removeItem(SK)}catch(e){}applyPos(JSON.parse(orig).map(function(a){return a.map(function(x){return[x[0],x[1]]})}));phases.forEach(function(f){f()});say("Reset to the loaded version")};fb.appendChild(br);
+fb.appendChild(el("span","","")).id="st";
 </script>
 </body>
 </html>
