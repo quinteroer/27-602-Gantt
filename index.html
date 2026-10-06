@@ -20,6 +20,12 @@ button{font:inherit;font-size:14px;background:var(--panel);color:var(--ink);bord
 button.on{background:var(--ink);color:var(--panel)}
 button:focus-visible,.lab:focus-visible{outline:2px solid #2f7de1;outline-offset:-2px}
 #st{color:var(--mute);font-size:13px;margin-left:4px}
+.tk .lab{cursor:pointer}.tk .bk{cursor:grab}
+#ed{display:flex;flex-wrap:wrap;gap:8px;align-items:end;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px}
+#ed[hidden]{display:none}
+#ed label{display:flex;flex-direction:column;font-size:12px;color:var(--mute);gap:2px}
+#ed input,#ed select{font:inherit;font-size:14px;padding:3px 6px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+#fN{width:260px}#ed input[type=number]{width:70px}
 .leg{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--mute);font-size:13px;margin-bottom:12px}
 .leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
 .wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
@@ -47,13 +53,18 @@ button:focus-visible,.lab:focus-visible{outline:2px solid #2f7de1;outline-offset
 .brk{position:absolute;top:0;bottom:0;background:var(--mute);opacity:.14;z-index:1;pointer-events:none}
 .vl.td{border-left:2px solid #2f7de1;opacity:.7}
 .note{color:var(--mute);font-size:13px;margin-top:14px;max-width:85ch}
+@page{size:landscape;margin:.4in}
+@media print{:root:root:root{--bg:#fff;--panel:#fff;--ink:#16243a;--mute:#5b6b82;--line:#d9e0ea;--grid:#e8edf4;--w:32px!important;--lw:350px!important}
+*{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+body{padding:0;background:#fff}.bar,#ed,.note{display:none}.wrap{overflow:visible;border:0}.chart{zoom:.62}.lab{position:static}h1{font-size:20px}.sub{font-size:12px}}
 @media (max-width:600px){:root{--lw:200px}.own{display:none}}
 </style>
 </head>
 <body>
 <h1>UAV Joint GCP and Flight Planner: Capstone Gantt</h1>
-<p class="sub">Aug 31, 2026 to Apr 30, 2027 (35 weeks). Click a phase to collapse it. Drag the dark handle on either end of a task bar to change its start or length (snaps to weeks). Red dashed lines are milestones; the blue line is Oct 5, 2026.</p>
+<p class="sub">Aug 31, 2026 to Apr 30, 2027 (35 weeks). Click a phase to collapse it. Click a task name to edit, move, add or delete it. Drag a bar to move it, or drag the dark handle on either end to change its start or length (snaps to weeks). Double-click a phase to rename or delete it. Red dashed lines are milestones; the blue line is Oct 5, 2026.</p>
 <div class="bar" id="fb"></div>
+<div id="ed" hidden><label>Task <input id="fN"></label><label>Owner(s) <input id="fO" size="14"></label><label>Phase <select id="fP"></select></label><label>Start week <input id="fS" type="number" min="1" max="35"></label><label>Weeks <input id="fL" type="number" min="1" max="35"></label><button id="fOk" class="on">Apply</button><button id="fUp">Move up</button><button id="fDn">Move down</button><button id="fDel">Delete</button><button id="fX">Cancel</button></div>
 <div class="leg" id="leg"></div>
 <div class="wrap"><div class="chart" id="ch"></div></div>
 <p class="note">Weeks start on Mondays (W1 = Aug 31, W15 = Dec 7, W30 = Mar 22, W35 = Apr 26). Edits save in your own browser automatically. To make them permanent for everyone, use "Commit to GitHub" (needs a GitHub token with write access to the repo) or "Copy data" and paste it into index.html on GitHub.</p>
@@ -69,15 +80,20 @@ button:focus-visible,.lab:focus-visible{outline:2px solid #2f7de1;outline-offset
 ];/*DATA-END*/
 var M=[["Team contract, 9/4",1],["Proposal, 10/9",6],["Fall poster, 11/13",11],["Prelim report, 12/7",14],["Expo abstract & poster, 3/26",30],["Final report, 4/30",35,1]];
 var NM=["Elias","Kaylee","Zain","Abbey"],ch=document.getElementById("ch"),leg=document.getElementById("leg"),fb=document.getElementById("fb");
-var GH={o:"quinteroer",r:"27-602-Gantt",f:"index.html"},SK="gantt-v1",orig=JSON.stringify(P.map(function(p){return p.t.map(function(t){return[t[1],t[2]]})}));
+var GH={o:"quinteroer",r:"27-602-Gantt",f:"index.html"},SK="gantt-v2",orig=JSON.stringify(P),hist=[],fut=[],col={},tasks=[],phases=[],cur=null;
 function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined)e.innerHTML=h;return e}
 function lab(a,b){return el("div","lab","<span>"+a+"</span><span class='own'>"+b+"</span>")}
 function say(m){document.getElementById("st").textContent=m}
-function applyPos(a){P.forEach(function(p,i){p.t.forEach(function(t,j){if(a[i]&&a[i][j]){t[1]=a[i][j][0];t[2]=a[i][j][1]}})})}
-try{var sv=localStorage.getItem(SK);if(sv)applyPos(JSON.parse(sv))}catch(e){}
-function save(){try{localStorage.setItem(SK,JSON.stringify(P.map(function(p){return p.t.map(function(t){return[t[1],t[2]]})})))}catch(e){}say("Edited (saved in this browser)")}
+function esc(x){return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/'/g,"&#39;")}
+function jc(){return JSON.stringify(P)}
+function snap(){hist.push(jc());if(hist.length>50)hist.shift();fut=[]}
+function save(){try{localStorage.setItem(SK,jc())}catch(e){}say("Edited (saved in this browser)")}
+try{var sv=localStorage.getItem(SK);if(sv)P=JSON.parse(sv)}catch(e){}
+function undo(){if(!hist.length)return;fut.push(jc());P=JSON.parse(hist.pop());render();save()}
+function redo(){if(!fut.length)return;hist.push(jc());P=JSON.parse(fut.pop());render();save()}
 var MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],g=[];
 for(var i=0;i<35;i++){var d=new Date(2026,7,31+7*i),k=MO[d.getMonth()]+(d.getMonth()==0?" 2027":"");if(g.length&&g[g.length-1][0]==k)g[g.length-1][1]++;else g.push([k,1])}
+function render(){ch.innerHTML="";leg.innerHTML="";tasks=[];phases=[];
 var h1=el("div","row hd m");h1.appendChild(lab("Schedule","Owner"));var t1=el("div","trk");
 g.forEach(function(x){var b=el("b","",x[0]);b.style.width="calc(var(--w)*"+x[1]+")";t1.appendChild(b)});h1.appendChild(t1);ch.appendChild(h1);
 var h2=el("div","row hd");h2.appendChild(lab("Week",""));var t2=el("div","trk");
@@ -88,34 +104,35 @@ var l=el("div","ml",m[0]);if(m[2]){l.style.right="calc(var(--w)*"+(35-m[1])+" + 
 var v=el("div","vl");v.style.left="calc(var(--lw) + var(--w)*"+m[1]+")";ch.appendChild(v)});mr.appendChild(mt);ch.appendChild(mr);
 var td=el("div","vl td");td.style.left="calc(var(--lw) + var(--w)*5)";td.title="Oct 5, 2026";ch.appendChild(td);
 [[16,7,"Winter break"],[28,1,"Spring break"]].forEach(function(b){var o=el("div","brk");o.style.left="calc(var(--lw) + var(--w)*"+(b[0]-1)+")";o.style.width="calc(var(--w)*"+b[1]+")";o.title=b[2];ch.appendChild(o)});
-var tasks=[],phases=[];
-P.forEach(function(p){
-leg.appendChild(el("span","","<i style='background:"+p.c+"'></i>"+p.n.replace(/^\d\. /,"").replace(/ \(.*\)/,"")));
-var r=el("div","row ph"),L=lab("<span class='car'>&#9662;</span> "+p.n,"");L.tabIndex=0;L.setAttribute("role","button");r.appendChild(L);
+P.forEach(function(p,pi){
+leg.appendChild(el("span","","<i style='background:"+p.c+"'></i>"+esc(p.n).replace(/^\d\. /,"").replace(/ \(.*\)/,"")));
+var r=el("div","row ph"),L=lab("<span class='car'>&#9662;</span> "+esc(p.n),"");L.tabIndex=0;L.setAttribute("role","button");r.appendChild(L);
 var tr=el("div","trk"),b=el("div","bk");tr.appendChild(b);r.appendChild(tr);ch.appendChild(r);
-function uph(){var s=Math.min.apply(0,p.t.map(function(x){return x[1]})),e=Math.max.apply(0,p.t.map(function(x){return x[1]+x[2]-1}));
+function uph(){if(!p.t.length){b.style.display="none";L.querySelector(".own").textContent="";return}var s=Math.min.apply(0,p.t.map(function(x){return x[1]})),e=Math.max.apply(0,p.t.map(function(x){return x[1]+x[2]-1}));
 b.style.cssText="background:"+p.c+";left:calc(var(--w)*"+(s-1)+");width:calc(var(--w)*"+(e-s+1)+")";L.querySelector(".own").textContent="W"+s+"-"+e}
 uph();
 var rows=[];
-p.t.forEach(function(t){
-var k=el("div","row tk");var l=lab(t[0],t[3]);l.style.paddingLeft="26px";k.appendChild(l);
+p.t.forEach(function(t,ti){
+var k=el("div","row tk");var l=lab(esc(t[0]),esc(t[3]));l.style.paddingLeft="26px";l.onclick=function(){openEd(pi,ti)};k.appendChild(l);
 var q=el("div","trk"),bb=el("div","bk"),hl=el("div","hl"),hr=el("div","hr");bb.appendChild(hl);bb.appendChild(hr);
 function ap(){bb.style.cssText="background:"+p.c+";left:calc(var(--w)*"+(t[1]-1)+" + 2px);width:calc(var(--w)*"+t[2]+" - 4px)";l.title=t[0]+" (W"+t[1]+"-"+(t[1]+t[2]-1)+", "+t[3]+")";bb.title="W"+t[1]+"-"+(t[1]+t[2]-1)+" ("+t[2]+" wk)";uph()}
 ap();
-function drag(h,side){h.onpointerdown=function(ev){ev.preventDefault();ev.stopPropagation();h.setPointerCapture(ev.pointerId);
+function drag(h,side){h.onpointerdown=function(ev){ev.preventDefault();ev.stopPropagation();h.setPointerCapture(ev.pointerId);snap();
 var x0=ev.clientX,s0=t[1],n0=t[2],W=q.offsetWidth/35;
 h.onpointermove=function(e2){var dw=Math.round((e2.clientX-x0)/W),s=s0,n=n0;
-if(side=="r")n=n0+dw;else{s=s0+dw;n=n0-dw}
+if(side=="r")n=n0+dw;else if(side=="m"){s=s0+dw;n=n0;if(s<1)s=1;if(s+n-1>35)s=36-n}else{s=s0+dw;n=n0-dw}
 if(n<1){if(side=="r")n=1;else{s=s0+n0-1;n=1}}
 if(s<1){n+=s-1;s=1}if(s+n-1>35)n=36-s;
 if(s!=t[1]||n!=t[2]){t[1]=s;t[2]=n;ap()}};
-h.onpointerup=h.onpointercancel=function(){h.onpointermove=h.onpointerup=h.onpointercancel=null;save()}}}
-drag(hl,"l");drag(hr,"r");
+h.onpointerup=h.onpointercancel=function(){h.onpointermove=h.onpointerup=h.onpointercancel=null;if(jc()==hist[hist.length-1]){hist.pop();return}save()}}}
+drag(hl,"l");drag(hr,"r");drag(bb,"m");
 q.appendChild(bb);k.appendChild(q);ch.appendChild(k);rows.push(k);tasks.push([k,t[3]]);phases.push(ap)});
-r._t=function(){var c=r.classList.toggle("col");rows.forEach(function(k){k.style.display=c?"none":""})};
-L.onclick=r._t;L.onkeydown=function(ev){if(ev.key=="Enter"||ev.key==" "){ev.preventDefault();r._t()}};
+r._t=function(){var c=r.classList.toggle("col");col[p.n]=c;rows.forEach(function(k){k.style.display=c?"none":""})};if(col[p.n])r._t();
+L.onclick=r._t;L.title="Double-click to rename or delete this phase";L.ondblclick=function(){var n=prompt("Rename phase (leave empty to delete it and its tasks):",p.n);if(n===null)return;snap();if(n.trim())p.n=n.trim();else if(confirm("Delete this phase and all its tasks?"))P.splice(pi,1);else{hist.pop();return}render();save()};L.onkeydown=function(ev){if(ev.key=="Enter"||ev.key==" "){ev.preventDefault();r._t()}};
 });
 leg.appendChild(el("span","","<i style='background:#d4422f'></i>Milestone"));leg.appendChild(el("span","","<i style='background:var(--mute);opacity:.4'></i>Gray bands: winter break (12/15 to 1/28), spring break (3/7 to 3/14)"));
+}
+render();
 function all(c){[].forEach.call(ch.querySelectorAll(".ph"),function(r){if(r._t&&r.classList.contains("col")!=c)r._t()})}
 function flt(n,btn){[].forEach.call(fb.querySelectorAll("button"),function(x){x.classList.toggle("on",x==btn)});
 tasks.forEach(function(t){t[0].style.opacity=(!n||t[1].indexOf(n)>-1||t[1]=="All")?1:.2})}
@@ -136,9 +153,29 @@ say("Committed. The live site updates in a minute or two.")}catch(e){sessionStor
 ["Collapse all","Expand all"].forEach(function(x,i){var b=el("button","",x);b.onclick=function(){all(i==0)};fb.appendChild(b)});
 var ab=el("button","on","Everyone");ab.onclick=function(){flt("",ab)};fb.appendChild(ab);
 NM.forEach(function(n){var b=el("button","",n);b.onclick=function(){flt(n,b)};fb.appendChild(b)});
+function tb(x,f){var b=el("button","",x);b.onclick=f;fb.appendChild(b)}
+var ZW=32,RT=document.documentElement;
+function zoom(d){ZW=Math.max(16,Math.min(64,ZW+d));RT.style.setProperty("--w",ZW+"px")}
+tb("Undo",undo);tb("Redo",redo);tb("+ Task",function(){openEd(0,-1)});
+tb("+ Phase",function(){var n=prompt("New phase name:");if(!n||!n.trim())return;snap();var C=["#3b82c4","#7a5cc7","#d98a1f","#c9453b","#5a8f3e","#b0509a","#6b7a90"];P.push({n:n.trim(),c:C[P.length%7],t:[]});render();save()});
+tb("Print / PDF",function(){window.print()});tb("Zoom -",function(){zoom(-4)});tb("Zoom +",function(){zoom(4)});
+tb("Dark/Light",function(){var dk=RT.dataset.theme?RT.dataset.theme=="dark":matchMedia("(prefers-color-scheme:dark)").matches;RT.dataset.theme=dk?"light":"dark"});
+tb("Paste data",function(){var t=prompt("Paste schedule data (JSON or the var P=[...]; block):");if(!t)return;try{var o=JSON.parse(t.replace(/^\s*var\s+P\s*=/,"").replace(/;\s*$/,""));if(!Array.isArray(o))throw 0;snap();P=o;render();save()}catch(e){say("Could not read that data")}});
+function g$(i){return document.getElementById(i)}
+var ed=g$("ed");
+function openEd(pi,ti){if(!P.length){say("Add a phase first");return}cur=[pi,ti];var t=ti<0?["New task",6,2,"All"]:P[pi].t[ti];
+g$("fN").value=t[0];g$("fO").value=t[3];g$("fS").value=t[1];g$("fL").value=t[2];
+g$("fP").innerHTML=P.map(function(p,i){return"<option value='"+i+"'>"+esc(p.n)+"</option>"}).join("");g$("fP").value=pi;
+g$("fDel").style.display=g$("fUp").style.display=g$("fDn").style.display=ti<0?"none":"";ed.hidden=false;g$("fN").focus()}
+g$("fOk").onclick=function(){if(!cur)return;var pi=cur[0],ti=cur[1],s=Math.max(1,Math.min(35,Math.round(+g$("fS").value)||1)),n=Math.max(1,Math.round(+g$("fL").value)||1);if(s+n-1>35)n=36-s;var np=+g$("fP").value,row=[g$("fN").value.trim()||"Untitled",s,n,g$("fO").value.trim()||"All"];snap();if(ti<0)P[np].t.push(row);else if(np==pi)P[pi].t[ti]=row;else{P[pi].t.splice(ti,1);P[np].t.push(row)}ed.hidden=true;cur=null;render();save()};
+g$("fDel").onclick=function(){if(!cur||cur[1]<0)return;snap();P[cur[0]].t.splice(cur[1],1);ed.hidden=true;cur=null;render();save()};
+function mv(d){if(!cur||cur[1]<0)return;var a=P[cur[0]].t,i=cur[1],j=i+d;if(j<0||j>=a.length)return;snap();var x=a[i];a[i]=a[j];a[j]=x;ed.hidden=true;cur=null;render();save()}
+g$("fUp").onclick=function(){mv(-1)};g$("fDn").onclick=function(){mv(1)};
+g$("fX").onclick=function(){ed.hidden=true;cur=null};
+document.onkeydown=function(e){if((e.ctrlKey||e.metaKey)&&!/INPUT|SELECT/.test(e.target.tagName)){var k=e.key.toLowerCase();if(k=="z"){e.preventDefault();e.shiftKey?redo():undo()}else if(k=="y"){e.preventDefault();redo()}}};
 var bc=el("button","","Commit to GitHub");bc.onclick=commit;fb.appendChild(bc);
 var by=el("button","","Copy data");by.onclick=function(){var t=dataText();(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){say("Copied. Paste over the var P=[...]; block in index.html.")},function(){prompt("Copy this:",t)})};fb.appendChild(by);
-var br=el("button","","Reset");br.onclick=function(){try{localStorage.removeItem(SK)}catch(e){}applyPos(JSON.parse(orig).map(function(a){return a.map(function(x){return[x[0],x[1]]})}));phases.forEach(function(f){f()});say("Reset to the loaded version")};fb.appendChild(br);
+var br=el("button","","Reset");br.onclick=function(){snap();try{localStorage.removeItem(SK)}catch(e){}P=JSON.parse(orig);render();say("Reset to the loaded version")};fb.appendChild(br);
 fb.appendChild(el("span","","")).id="st";
 </script>
 </body>
