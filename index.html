@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UAV Joint GCP and Flight Planner: Capstone Gantt</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#f1f4f8;--panel:#fff;--ink:#16243a;--mute:#5b6b82;--line:#d9e0ea;--grid:#e8edf4;--w:32px;--lw:350px;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1724;--panel:#16202f;--ink:#e6ecf5;--mute:#93a3ba;--line:#2a3a50;--grid:#1f2c3f}}
+:root[data-theme="dark"]{--bg:#0f1724;--panel:#16202f;--ink:#e6ecf5;--mute:#93a3ba;--line:#2a3a50;--grid:#1f2c3f}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Schibsted Grotesk",system-ui,sans-serif;padding:20px 16px 40px}
+h1{font-size:25px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{color:var(--mute);margin:0 0 14px;max-width:75ch}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+button{font:inherit;font-size:14px;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px 12px;cursor:pointer}
+button.on{background:var(--ink);color:var(--panel)}
+button:focus-visible,.lab:focus-visible{outline:2px solid #2f7de1;outline-offset:-2px}
+.leg{display:flex;flex-wrap:wrap;gap:4px 14px;color:var(--mute);font-size:13px;margin-bottom:12px}
+.leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px}
+.wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+.chart{position:relative;width:max-content;min-width:100%}
+.row{display:flex;border-bottom:1px solid var(--grid);height:32px;transition:opacity .15s}
+.lab{position:sticky;left:0;z-index:3;width:var(--lw);flex:none;background:var(--panel);padding:0 10px;display:flex;align-items:center;justify-content:space-between;gap:8px;border-right:1px solid var(--line);overflow:hidden;white-space:nowrap}
+.lab>span:first-child{overflow:hidden;text-overflow:ellipsis}
+.own{color:var(--mute);font-size:12px;flex:none}
+.trk{position:relative;width:calc(var(--w)*35);flex:none;background:repeating-linear-gradient(90deg,transparent 0,transparent calc(var(--w) - 1px),var(--grid) calc(var(--w) - 1px),var(--grid) var(--w))}
+.hd .trk{display:flex;background:none}
+.hd b{flex:none;text-align:center;font-weight:500;font-size:12px;color:var(--mute);line-height:32px;overflow:hidden;border-right:1px solid var(--grid)}
+.hd.m b{font-weight:700;color:var(--ink);text-align:left;padding-left:6px}
+.ph{height:36px;font-weight:700}
+.ph .lab{cursor:pointer}
+.ph .bk{position:absolute;top:12px;height:12px;border-radius:3px;opacity:.5}
+.tk .bk{position:absolute;top:7px;height:18px;border-radius:4px}
+.car{display:inline-block;width:14px;transition:transform .15s}
+.col .car{transform:rotate(-90deg)}
+.dm{position:absolute;top:8px;width:16px;height:16px;transform:rotate(45deg);background:#d4422f;border-radius:2px}
+.ml{position:absolute;top:0;font-size:12px;font-weight:700;line-height:32px;white-space:nowrap}
+.vl{position:absolute;top:0;bottom:0;width:0;border-left:1px dashed #d4422f;opacity:.5;z-index:1;pointer-events:none}
+.brk{position:absolute;top:0;bottom:0;background:var(--mute);opacity:.14;z-index:1;pointer-events:none}
+.vl.td{border-left:2px solid #2f7de1;opacity:.7}
+.note{color:var(--mute);font-size:13px;margin-top:14px;max-width:85ch}
+@media (max-width:600px){:root{--lw:200px}.own{display:none}}
+</style>
+</head>
+<body>
+<h1>UAV Joint GCP and Flight Planner: Capstone Gantt</h1>
+<p class="sub">Aug 31, 2026 to Apr 30, 2027 (35 weeks). Click a phase to collapse it. Red dashed lines are your milestones; the blue line is Oct 5, 2026. Most tasks are team-wide, so your advisor weekly splits can sit underneath these.</p>
+<div class="bar" id="fb"></div>
+<div class="leg" id="leg"></div>
+<div class="wrap"><div class="chart" id="ch"></div></div>
+<p class="note">Weeks start on Mondays (W1 = Aug 31, W15 = Dec 7, W30 = Mar 22, W35 = Apr 26). Milestone lines mark the end of the due week. Edit the dates in the data block if your calendar differs.</p>
+<script>
+var P=[
+{n:"1. Planning & proposal",c:"#3b82c4",t:[
+["Research: GDOP, photogrammetry, GCP and flight planning",2,4,"All"],
+["Requirements, success metrics, baseline definitions",3,3,"All"],
+["Proposal draft, advisor review, submit",4,3,"All"]]},
+{n:"2. Formulation & Python simulation (objectives 1, 2)",c:"#7a5cc7",t:[
+["Math: GDOP model, flight-path model, joint optimization",5,8,"All"],
+["Simulation: terrain model, error predictor, grid & sequential baselines",9,7,"All"],
+["Implement joint planner",12,4,"All"],
+["Experiments: joint vs baselines, tuning",23,3,"All"]]},
+{n:"3. Fall deliverables & decisions",c:"#d98a1f",t:[
+["Fall design poster",8,4,"All"],
+["Preliminary report",11,4,"All"],
+["Decide photogrammetry software & plug-in approach",12,3,"All"]]},
+{n:"4. ArcGIS Pro plug-in (objective 3)",c:"#c9453b",t:[
+["Plug-in design & toolbox skeleton (light work over break)",19,4,"All"],
+["Build plug-in: inputs, planner tool, GCP and flight-path outputs",23,4,"All"],
+["Benchmark: confirm 2x lower predicted error than grid",26,2,"All"],
+["Polish, bug fixes, edge cases",29,3,"All"]]},
+{n:"5. Field validation (objective 4)",c:"#5a8f3e",t:[
+["Part 107 license, site permission, airspace authorization, order ArUco targets",16,7,"Kaylee"],
+["Test plan, camera & RTK setup, dry-run flight",23,3,"All"],
+["Validation flight",27,1,"All"],
+["Backup flight window (after spring break)",29,1,"All"],
+["Process data; compare measured vs simulated error",29,4,"All"]]},
+{n:"6. Packaging & documentation (objective 5)",c:"#b0509a",t:[
+["Operator documentation, quick-start & installer package",29,4,"All"],
+["Usability test with a non-team operator",31,2,"All"]]},
+{n:"7. Expo & final report",c:"#6b7a90",t:[
+["Expo abstract & poster (both due 3/26)",26,5,"All"],
+["Final report: full draft & advisor review",31,3,"All"],
+["Final report: revise, submit, project handoff",34,2,"All"]]}
+];
+var M=[["Team contract, 9/4",1],["Proposal, 10/9",6],["Fall poster, 11/13",11],["Prelim report, 12/7",14],["Expo abstract & poster, 3/26",30],["Final report, 4/30",35,1]];
+var NM=["Elias","Kaylee","Zain","Abbey"],ch=document.getElementById("ch"),leg=document.getElementById("leg"),fb=document.getElementById("fb");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined)e.innerHTML=h;return e}
+function lab(a,b){return el("div","lab","<span>"+a+"</span><span class='own'>"+b+"</span>")}
+var MO=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"],g=[];
+for(var i=0;i<35;i++){var d=new Date(2026,7,31+7*i),k=MO[d.getMonth()]+(d.getMonth()==0?" 2027":"");if(g.length&&g[g.length-1][0]==k)g[g.length-1][1]++;else g.push([k,1])}
+var h1=el("div","row hd m");h1.appendChild(lab("Schedule","Owner"));var t1=el("div","trk");
+g.forEach(function(x){var b=el("b","",x[0]);b.style.width="calc(var(--w)*"+x[1]+")";t1.appendChild(b)});h1.appendChild(t1);ch.appendChild(h1);
+var h2=el("div","row hd");h2.appendChild(lab("Week",""));var t2=el("div","trk");
+for(i=0;i<35;i++){var b=el("b","",i+1),d=new Date(2026,7,31+7*i);b.style.width="var(--w)";b.title="Week of "+(d.getMonth()+1)+"/"+d.getDate();t2.appendChild(b)}h2.appendChild(t2);ch.appendChild(h2);
+var mr=el("div","row ph");mr.appendChild(lab("Milestones","6"));var mt=el("div","trk");
+M.forEach(function(m){var d=el("div","dm");d.style.left="calc(var(--w)*"+m[1]+" - 18px)";d.title=m[0];mt.appendChild(d);
+var l=el("div","ml",m[0]);if(m[2]){l.style.right="calc(var(--w)*"+(35-m[1])+" + 22px)"}else{l.style.left="calc(var(--w)*"+m[1]+" + 2px)"}mt.appendChild(l);
+var v=el("div","vl");v.style.left="calc(var(--lw) + var(--w)*"+m[1]+")";ch.appendChild(v)});mr.appendChild(mt);ch.appendChild(mr);
+var td=el("div","vl td");td.style.left="calc(var(--lw) + var(--w)*5)";td.title="Oct 5, 2026";ch.appendChild(td);
+[[16,7,"Winter break"],[28,1,"Spring break"]].forEach(function(b){var o=el("div","brk");o.style.left="calc(var(--lw) + var(--w)*"+(b[0]-1)+")";o.style.width="calc(var(--w)*"+b[1]+")";o.title=b[2];ch.appendChild(o)});
+var tasks=[];
+P.forEach(function(p){
+leg.appendChild(el("span","","<i style='background:"+p.c+"'></i>"+p.n.replace(/^\d\. /,"").replace(/ \(.*\)/,"")));
+var s=Math.min.apply(0,p.t.map(function(x){return x[1]})),e=Math.max.apply(0,p.t.map(function(x){return x[1]+x[2]-1}));
+var r=el("div","row ph"),L=lab("<span class='car'>&#9662;</span> "+p.n,"W"+s+"-"+e);L.tabIndex=0;L.setAttribute("role","button");r.appendChild(L);
+var tr=el("div","trk"),b=el("div","bk");b.style.cssText="background:"+p.c+";left:calc(var(--w)*"+(s-1)+");width:calc(var(--w)*"+(e-s+1)+")";tr.appendChild(b);r.appendChild(tr);ch.appendChild(r);
+var rows=[];
+p.t.forEach(function(t){
+var k=el("div","row tk");var l=lab(t[0],t[3]);l.title=t[0]+" (W"+t[1]+"-"+(t[1]+t[2]-1)+", "+t[3]+")";l.style.paddingLeft="26px";k.appendChild(l);
+var q=el("div","trk"),bb=el("div","bk");bb.style.cssText="background:"+p.c+";left:calc(var(--w)*"+(t[1]-1)+" + 2px);width:calc(var(--w)*"+t[2]+" - 4px)";q.appendChild(bb);k.appendChild(q);ch.appendChild(k);rows.push(k);tasks.push([k,t[3]])});
+r._t=function(){var c=r.classList.toggle("col");rows.forEach(function(k){k.style.display=c?"none":""})};
+L.onclick=r._t;L.onkeydown=function(ev){if(ev.key=="Enter"||ev.key==" "){ev.preventDefault();r._t()}};
+});
+leg.appendChild(el("span","","<i style='background:#d4422f'></i>Milestone"));leg.appendChild(el("span","","<i style='background:var(--mute);opacity:.4'></i>Gray bands: winter break (12/15 to 1/28), spring break (3/7 to 3/14)"));
+function all(c){[].forEach.call(ch.querySelectorAll(".ph"),function(r){if(r._t&&r.classList.contains("col")!=c)r._t()})}
+function flt(n,btn){[].forEach.call(fb.querySelectorAll("button"),function(x){x.classList.toggle("on",x==btn)});
+tasks.forEach(function(t){t[0].style.opacity=(!n||t[1].indexOf(n)>-1||t[1]=="All")?1:.2})}
+["Collapse all","Expand all"].forEach(function(x,i){var b=el("button","",x);b.onclick=function(){all(i==0)};fb.appendChild(b)});
+</script>
+</body>
+</html>
